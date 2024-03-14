@@ -378,7 +378,8 @@ export async function dataItemRoute(ctx: KoaContext, next: Next) {
             content_type: payloadContentType,
             data_size: payloadDataByteCount,
             tags,
-          })
+          }),
+          await ctx.state.getOpticalWallet(),
         )
       );
       confirmedFeatures.fastFinalityIndexes = fastFinalityIndexes;

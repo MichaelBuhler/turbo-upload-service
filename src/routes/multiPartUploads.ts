@@ -350,6 +350,7 @@ export async function finalizeMultipartUploadWithQueueMessage({
   database,
   arweaveGateway,
   getArweaveWallet,
+  getOpticalWallet,
   logger,
 }: {
   message: Message;
@@ -358,6 +359,7 @@ export async function finalizeMultipartUploadWithQueueMessage({
   database: Database;
   arweaveGateway: ArweaveGateway;
   getArweaveWallet: () => Promise<JWKInterface>;
+  getOpticalWallet: () => Promise<JWKInterface>;
   logger: winston.Logger;
 }) {
   const uploadId = JSON.parse(message.Body ?? "").uploadId as UploadId;
@@ -374,6 +376,7 @@ export async function finalizeMultipartUploadWithQueueMessage({
     database,
     arweaveGateway,
     getArweaveWallet,
+    getOpticalWallet,
     logger,
     asyncValidation: false,
   });
@@ -388,6 +391,7 @@ export async function finalizeMultipartUploadWithHttpRequest(ctx: KoaContext) {
     database,
     logger,
     getArweaveWallet,
+    getOpticalWallet,
     arweaveGateway,
   } = ctx.state;
   try {
@@ -398,6 +402,7 @@ export async function finalizeMultipartUploadWithHttpRequest(ctx: KoaContext) {
       database,
       arweaveGateway,
       getArweaveWallet,
+      getOpticalWallet,
       logger,
       asyncValidation,
     });
@@ -448,6 +453,7 @@ export async function finalizeMultipartUpload({
   database,
   arweaveGateway,
   getArweaveWallet,
+  getOpticalWallet,
   logger,
   asyncValidation,
 }: {
@@ -457,6 +463,7 @@ export async function finalizeMultipartUpload({
   database: Database;
   arweaveGateway: ArweaveGateway;
   getArweaveWallet: () => Promise<JWKInterface>;
+  getOpticalWallet: () => Promise<JWKInterface>;
   logger: winston.Logger;
   asyncValidation: boolean;
 }): Promise<{
@@ -530,6 +537,7 @@ export async function finalizeMultipartUpload({
       database,
       arweaveGateway,
       getArweaveWallet,
+      getOpticalWallet,
       validatedUploadInfo: {
         uploadKey: finishedMPUEntity.uploadKey,
         dataItemId: finishedMPUEntity.dataItemId,
@@ -551,6 +559,7 @@ export async function finalizeMultipartUpload({
     database,
     arweaveGateway,
     getArweaveWallet,
+    getOpticalWallet,
     inFlightMPUEntity,
     logger: fnLogger,
     asyncValidation,
@@ -569,6 +578,7 @@ export async function finalizeMPUWithInFlightEntity({
   database,
   arweaveGateway,
   getArweaveWallet,
+  getOpticalWallet,
   inFlightMPUEntity,
   logger,
   asyncValidation,
@@ -579,6 +589,7 @@ export async function finalizeMPUWithInFlightEntity({
   database: Database;
   arweaveGateway: ArweaveGateway;
   getArweaveWallet: () => Promise<JWKInterface>;
+  getOpticalWallet: () => Promise<JWKInterface>;
   inFlightMPUEntity: InFlightMultiPartUpload;
   logger: winston.Logger;
   asyncValidation: boolean;
@@ -734,6 +745,7 @@ export async function finalizeMPUWithInFlightEntity({
     database,
     arweaveGateway,
     getArweaveWallet,
+    getOpticalWallet,
     validatedUploadInfo: {
       uploadKey: inFlightMPUEntity.uploadKey,
       etag: finalizedEtag,
@@ -750,6 +762,7 @@ export async function finalizeMPUWithValidatedInfo({
   database,
   arweaveGateway,
   getArweaveWallet,
+  getOpticalWallet,
   validatedUploadInfo,
   logger,
 }: {
@@ -759,6 +772,7 @@ export async function finalizeMPUWithValidatedInfo({
   database: Database;
   arweaveGateway: ArweaveGateway;
   getArweaveWallet: () => Promise<JWKInterface>;
+  getOpticalWallet: () => Promise<JWKInterface>;
   validatedUploadInfo: {
     uploadKey: string;
     etag: string;
@@ -783,6 +797,7 @@ export async function finalizeMPUWithValidatedInfo({
       database,
       arweaveGateway,
       getArweaveWallet,
+      getOpticalWallet,
       dataItemId,
       logger: fnLogger,
     });
@@ -830,6 +845,7 @@ export async function finalizeMPUWithValidatedInfo({
     database,
     arweaveGateway,
     getArweaveWallet,
+    getOpticalWallet,
     dataItemInfo: {
       dataItemId,
       payloadDataStart,
@@ -859,6 +875,7 @@ export async function finalizeMPUWithRawDataItem({
   database,
   arweaveGateway,
   getArweaveWallet,
+  getOpticalWallet,
   dataItemId,
   logger,
 }: {
@@ -868,6 +885,7 @@ export async function finalizeMPUWithRawDataItem({
   database: Database;
   arweaveGateway: ArweaveGateway;
   getArweaveWallet: () => Promise<JWKInterface>;
+  getOpticalWallet: () => Promise<JWKInterface>;
   dataItemId: string;
   logger: winston.Logger;
 }) {
@@ -914,6 +932,7 @@ export async function finalizeMPUWithRawDataItem({
     database,
     arweaveGateway,
     getArweaveWallet,
+    getOpticalWallet,
     dataItemInfo: {
       ...dataItemInfo,
       target: dataItemHeaders.target,
@@ -931,6 +950,7 @@ export async function finalizeMPUWithDataItemInfo({
   database,
   arweaveGateway,
   getArweaveWallet,
+  getOpticalWallet,
   dataItemInfo,
   logger,
 }: {
@@ -945,6 +965,7 @@ export async function finalizeMPUWithDataItemInfo({
   database: Database;
   arweaveGateway: ArweaveGateway;
   getArweaveWallet: () => Promise<JWKInterface>;
+  getOpticalWallet: () => Promise<JWKInterface>;
   logger: winston.Logger;
 }): Promise<IrysSignedReceipt> {
   // At the point, the DB has finalized the in flight upload, the validated data item is in
@@ -1007,7 +1028,8 @@ export async function finalizeMPUWithDataItemInfo({
             content_type: dataItemInfo.payloadContentType,
             data_size: dataItemInfo.byteCount - dataItemInfo.payloadDataStart,
             tags: dataItemInfo.tags,
-          })
+          }),
+          await getOpticalWallet(),
         )
       ).catch((error) => {
         fnLogger.error("Error enqueuing data item to optical", { error });

@@ -19,7 +19,7 @@ import axios from "axios";
 import winston from "winston";
 
 import logger from "../logger";
-import { getOpticalPubKey } from "../utils/getArweaveWallet";
+import { getOpticalWallet, getOpticalPubKey } from "../utils/getArweaveWallet";
 import {
   SignedDataItemHeader,
   encodeTagsForOptical,
@@ -53,7 +53,8 @@ export const opticalPostHandler = async ({
       })
     ).map(async (nestedHeader) => {
       const opticalNestedHeader = await signDataItemHeader(
-        encodeTagsForOptical(nestedHeader)
+        encodeTagsForOptical(nestedHeader),
+        await getOpticalWallet(),
       );
       return JSON.stringify(opticalNestedHeader);
     })

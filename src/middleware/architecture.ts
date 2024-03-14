@@ -28,6 +28,7 @@ export async function architectureMiddleware(
   ctx.state.objectStore = arch.objectStore;
   ctx.state.paymentService = arch.paymentService;
   ctx.state.getArweaveWallet = arch.getArweaveWallet;
+  ctx.state.getOpticalWallet = arch.getOpticalWallet;
   ctx.state.arweaveGateway = arch.arweaveGateway;
   return next();
 }

@@ -22,7 +22,7 @@ import winston from "winston";
 import { migrateOnStartup } from "../constants";
 import globalLogger from "../logger";
 import { isTestEnv } from "../utils/common";
-import { getArweaveWallet } from "../utils/getArweaveWallet";
+import { getArweaveWallet, getOpticalWallet } from "../utils/getArweaveWallet";
 import { getS3ObjectStore } from "../utils/objectStoreUtils";
 import { ArweaveGateway } from "./arweaveGateway";
 import { Database } from "./db/database";
@@ -39,6 +39,7 @@ export interface Architecture {
   logger: winston.Logger;
   arweaveGateway: ArweaveGateway;
   getArweaveWallet: () => Promise<JWKInterface>;
+  getOpticalWallet: () => Promise<JWKInterface>;
   tracer?: Tracer;
 }
 
@@ -56,5 +57,6 @@ export const defaultArchitecture: Architecture = {
   paymentService: new TurboPaymentService(),
   logger: globalLogger,
   getArweaveWallet: () => getArweaveWallet(),
+  getOpticalWallet: () => getOpticalWallet(),
   arweaveGateway: new ArweaveGateway({}),
 };

@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { ArweaveSigner, Tag, deepHash, processStream } from "arbundles";
+import { ArweaveSigner, JWKInterface, Tag, deepHash, processStream } from "arbundles";
 import { stringToBuffer } from "arweave/node/lib/utils";
 import pLimit from "p-limit";
 import winston from "winston";
@@ -23,7 +23,6 @@ import { ObjectStore } from "../arch/objectStore";
 import { ParsedDataItemHeader } from "../types/types";
 import { fromB64Url, ownerToAddress, toB64Url } from "./base64";
 import { payloadContentTypeFromDecodedTags } from "./common";
-import { getOpticalWallet } from "./getArweaveWallet";
 import { getDataItemData, getS3ObjectStore } from "./objectStoreUtils";
 
 export type DataItemHeader = {
@@ -74,9 +73,9 @@ export function decodeOpticalizedTags(
 }
 
 export async function signDataItemHeader(
-  dataItemHeader: DataItemHeader
+  dataItemHeader: DataItemHeader,
+  jwk: JWKInterface,
 ): Promise<SignedDataItemHeader> {
-  const jwk = await getOpticalWallet();
   const arweaveSigner = new ArweaveSigner(jwk);
   const message = await deepHash([stringToBuffer(dataItemHeader.id)]);
   const bundlr_signature = Buffer.from(

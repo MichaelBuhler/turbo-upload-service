@@ -58,6 +58,8 @@ export async function createServer(
 
   const getArweaveWallet =
     arch.getArweaveWallet ?? defaultArchitecture.getArweaveWallet;
+  const getOpticalWallet =
+    arch.getOpticalWallet ?? defaultArchitecture.getOpticalWallet;
   const arweaveGateway =
     arch.arweaveGateway ?? defaultArchitecture.arweaveGateway;
   const tracer =
@@ -79,6 +81,7 @@ export async function createServer(
       paymentService,
       arweaveGateway,
       getArweaveWallet,
+      getOpticalWallet,
       tracer,
     })
   );
